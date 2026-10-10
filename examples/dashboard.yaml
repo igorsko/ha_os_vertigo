@@ -1,0 +1,21 @@
+# Replace these illustrative IDs with the IDs assigned by your Home Assistant.
+type: entities
+title: Olimpia Splendid Vertigo
+show_header_toggle: false
+entities:
+  - entity: fan.vertigo_ventilatore
+    name: Ventilatore e velocità
+  - entity: switch.vertigo_oscillazione
+    name: Oscillazione
+  - entity: climate.vertigo_riscaldamento
+    name: Riscaldamento e temperatura
+  - entity: select.vertigo_modalita
+    name: Normale / Sonno / Turbo / Fresh
+  - entity: select.vertigo_livello_riscaldamento
+  - entity: switch.vertigo_lampada_uv
+  - entity: switch.vertigo_segnale_acustico
+    name: Segnale acustico (OFF = silenzioso)
+  - entity: select.vertigo_timer
+  - entity: sensor.vertigo_temperatura_ambiente
+  - entity: sensor.vertigo_timer_residuo
+  - entity: sensor.vertigo_codice_guasto
