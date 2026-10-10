@@ -1,0 +1,28 @@
+{
+  "title": "Olimpia Splendid Vertigo",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect your Vertigo locally",
+        "description": "Enter your device's parameters. Close OS Home and disable other local integrations for this device before testing the connection. The local key must contain 16 characters. No cloud account is required after key retrieval.",
+        "data": {"name": "Name", "host": "IP address or hostname", "device_id": "Device ID", "local_key": "Local key"}
+      },
+      "reconfigure": {
+        "title": "Update the local connection",
+        "description": "Enter the new address and current local key. Device ID remains unchanged.",
+        "data": {"host": "IP address or hostname", "local_key": "Local key"}
+      }
+    },
+    "error": {
+      "invalid_credentials": "Enter a valid address, device ID and a 16-byte local key.",
+      "cannot_connect": "Cannot read the device. Check address, key, firewall and other clients using the device."
+    },
+    "abort": {
+      "already_configured": "This device is already configured.",
+      "reconfigure_successful": "Connection updated successfully."
+    }
+  },
+  "options": {
+    "step": {"init": {"title": "Local polling", "data": {"poll_interval": "Polling interval in seconds (10–120)"}}}
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "domain": "olimpia_vertigo",
+  "name": "Olimpia Splendid Vertigo",
+  "version": "0.1.0",
+  "codeowners": ["@igorsko"],
+  "config_flow": true,
+  "documentation": "https://github.com/igorsko/ha_os_vertigo",
+  "issue_tracker": "https://github.com/igorsko/ha_os_vertigo/issues",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "requirements": ["tinytuya==1.20.0"]
+}
