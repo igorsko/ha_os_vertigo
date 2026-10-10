@@ -1,0 +1,28 @@
+{
+  "title": "Olimpia Splendid Vertigo",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Collega il Vertigo in locale",
+        "description": "Inserisci i parametri del tuo dispositivo. Chiudi OS Home e disabilita eventuali altre integrazioni locali del Vertigo prima della verifica. La chiave locale deve contenere 16 caratteri. Dopo il recupero della chiave non serve un account cloud.",
+        "data": {"name": "Nome", "host": "Indirizzo IP o nome host", "device_id": "ID dispositivo", "local_key": "Chiave locale"}
+      },
+      "reconfigure": {
+        "title": "Aggiorna la connessione locale",
+        "description": "Inserisci il nuovo indirizzo e la chiave locale attuale. L'ID dispositivo resta invariato.",
+        "data": {"host": "Indirizzo IP o nome host", "local_key": "Chiave locale"}
+      }
+    },
+    "error": {
+      "invalid_credentials": "Inserisci indirizzo, ID dispositivo e chiave locale valida di 16 byte.",
+      "cannot_connect": "Impossibile leggere il dispositivo. Controlla indirizzo, chiave, firewall e altre connessioni al Vertigo."
+    },
+    "abort": {
+      "already_configured": "Questo dispositivo è già configurato.",
+      "reconfigure_successful": "Connessione aggiornata."
+    }
+  },
+  "options": {
+    "step": {"init": {"title": "Aggiornamento locale", "data": {"poll_interval": "Intervallo di lettura in secondi (10–120)"}}}
+  }
+}
