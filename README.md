@@ -2,7 +2,7 @@
 
 Independent custom integration for local control of the OS Home / Tuya 3.3 Vertigo variant. Uses [TinyTuya](https://github.com/jasonacox/tinytuya), without LocalTuya or a cloud connection for normal operation.
 
-**Version 0.1.0 is an initial release.** The parameter map comes from an OS Home device schema and commands previously checked through LocalTuya. This new implementation has automated tests against Home Assistant 2026.10.0 with a simulated transport; it has not yet been installed and physically tested on a Vertigo. Compatibility with other Vertigo variants is unverified.
+**Version 0.2.0 adds coordinated heater cooldown.** The parameter map comes from an OS Home device schema and commands previously checked through LocalTuya. This new implementation has automated tests against Home Assistant 2026.10.0 with a simulated transport; it has not yet been installed and physically tested on a Vertigo. Compatibility with other Vertigo variants is unverified.
 
 ![Example Vertigo dashboard](docs/images/vertigo-dashboard.png)
 
@@ -18,7 +18,7 @@ Independent custom integration for local control of the OS Home / Tuya 3.3 Verti
 - Timer disabled or 1–8 hours, remaining minutes and raw fault code.
 - Manual setup wizard, connection check, address/key reconfiguration and configurable polling.
 
-Heater OFF disables heating while preserving fan power. Fan OFF switches off the whole appliance. Setting a temperature does not turn heating on. Manual fan speed returns the fan preset to Normal. No commands are replayed automatically after reconnecting.
+Heater OFF disables heating while preserving fan power. Fan OFF switches off the whole appliance after confirming heater OFF and allowing 30 seconds of cooling when heating was active. An explicit restart supersedes pending shutdown. On communication failure, the integration does not send an unconfirmed power-off command. This software sequence is not a substitute for hardware protection and cannot control shutdowns initiated outside Home Assistant. Setting a temperature does not turn heating on. Manual fan speed returns the fan preset to Normal. No commands are replayed automatically after reconnecting.
 
 ## Requirements
 
@@ -52,7 +52,7 @@ Prima della verifica chiudi OS Home e disabilita l'altra integrazione locale del
 
 Le entità nuove hanno identificatori propri: la plancia precedente non viene sostituita automaticamente. Puoi aggiungerle dal dispositivo tramite **Aggiungi alla plancia**, oppure adattare [l'esempio YAML](examples/dashboard.yaml) agli ID assegnati nel tuo sistema.
 
-**Silenzioso:** disattiva **Segnale acustico**. **Riscaldamento spento:** spegne il riscaldamento lasciando la ventilazione disponibile. **Ventilatore spento:** spegne l'apparecchio. La temperatura viene inviata come intero da 1 a 30 °C, secondo lo schema rilevato.
+**Silenzioso:** disattiva **Segnale acustico**. **Riscaldamento spento:** spegne il riscaldamento lasciando la ventilazione disponibile. **Ventilatore spento:** spegne il riscaldamento, ne verifica lo stato e mantiene la ventola accesa per 30 secondi se il riscaldamento era attivo. Poi spegne l'apparecchio. Un comando di riaccensione annulla lo spegnimento in attesa. La temperatura viene inviata come intero da 1 a 30 °C, secondo lo schema rilevato.
 
 ## Troubleshooting
 
