@@ -1,7 +1,7 @@
 {
   "domain": "olimpia_vertigo",
   "name": "Olimpia Splendid Vertigo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "codeowners": ["@igorsko"],
   "config_flow": true,
   "documentation": "https://github.com/igorsko/ha_os_vertigo",
