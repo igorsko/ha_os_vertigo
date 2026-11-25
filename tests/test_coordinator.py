@@ -69,3 +69,40 @@ async def test_diagnostics_omit_credentials(hass, entry, transport):
     for value in entry.data.values():
         assert value not in text
     await coordinator.close()
+
+
+async def test_shutdown_cools_before_power_off(hass, entry, transport, monkeypatch):
+    from unittest.mock import call
+
+    from custom_components.olimpia_vertigo import coordinator as module
+
+    coordinator = VertigoCoordinator(hass, entry)
+    clock = [100.0]
+    monkeypatch.setattr(module, "monotonic", lambda: clock[0])
+    transport.status.side_effect = [
+        {"dps": {"1": True, "103": True}},
+        {"dps": {"1": True, "103": False}},
+        {"dps": {"1": True, "103": False}},
+        {"dps": {"1": False, "103": False}},
+    ]
+
+    async def sleep(delay):
+        assert delay == 30
+        assert transport.set_multiple_values.call_args_list == [call({"103": False})]
+        clock[0] += delay
+
+    monkeypatch.setattr(module.asyncio, "sleep", sleep)
+    await coordinator.command({"1": False})
+    assert transport.set_multiple_values.call_args_list == [
+        call({"103": False}), call({"1": False})
+    ]
+    await coordinator.close()
+
+
+async def test_shutdown_refuses_unconfirmed_heater_off(hass, entry, transport):
+    transport.status.return_value = {"dps": {"1": True, "103": True}}
+    coordinator = VertigoCoordinator(hass, entry)
+    with pytest.raises(HomeAssistantError, match="Cannot confirm heater off"):
+        await coordinator.command({"1": False})
+    transport.set_multiple_values.assert_called_once_with({"103": False})
+    await coordinator.close()
