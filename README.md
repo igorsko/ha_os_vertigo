@@ -2,7 +2,7 @@
 
 Independent custom integration for local control of the OS Home / Tuya 3.3 Vertigo variant. Uses [TinyTuya](https://github.com/jasonacox/tinytuya), without LocalTuya or a cloud connection for normal operation.
 
-**Version 0.2.0 adds coordinated heater cooldown.** The parameter map comes from an OS Home device schema and commands previously checked through LocalTuya. This new implementation has automated tests against Home Assistant 2026.10.0 with a simulated transport; it has not yet been installed and physically tested on a Vertigo. Compatibility with other Vertigo variants is unverified.
+**Version 0.2.0 (pending validation)** adds coordinated heater cooldown. The parameter map comes from an OS Home device schema and commands previously checked through LocalTuya. Automated tests target Home Assistant 2026.10.0 with a simulated transport; the standalone integration and cooldown sequence have not yet been validated on physical hardware. Compatibility with other Vertigo variants is unverified.
 
 ![Example Vertigo dashboard](docs/images/vertigo-dashboard.png)
 
@@ -14,11 +14,12 @@ Independent custom integration for local control of the OS Home / Tuya 3.3 Verti
 - Horizontal oscillation, also exposed as a separate switch.
 - Normal, Sleep, Turbo and Fresh presets.
 - Heater on/off, four heating levels, target and ambient temperature.
+- Coordinated shutdown: heater OFF confirmation, 30-second fan cooldown, then master power OFF.
 - UV lamp and acoustic signal; switch off the acoustic signal for silent operation.
 - Timer disabled or 1–8 hours, remaining minutes and raw fault code.
 - Manual setup wizard, connection check, address/key reconfiguration and configurable polling.
 
-Heater OFF disables heating while preserving fan power. Fan OFF switches off the whole appliance after confirming heater OFF and allowing 30 seconds of cooling when heating was active. An explicit restart supersedes pending shutdown. On communication failure, the integration does not send an unconfirmed power-off command. This software sequence is not a substitute for hardware protection and cannot control shutdowns initiated outside Home Assistant. Setting a temperature does not turn heating on. Manual fan speed returns the fan preset to Normal. No commands are replayed automatically after reconnecting.
+Heater OFF disables heating while preserving fan power. Fan OFF switches off the whole appliance after confirming heater OFF and allowing 30 seconds of cooling when heating was active. An explicit restart supersedes pending shutdown. On communication failure, the integration does not send an unconfirmed power-off command. This software sequence is not a substitute for hardware protection and cannot control shutdowns initiated outside Home Assistant. The countdown is held in memory; restarting or unloading Home Assistant can interrupt it. The device's own timer, physical controls and other clients are outside this coordination. Setting a temperature does not turn heating on. Manual fan speed returns the fan preset to Normal. No commands are replayed automatically after reconnecting.
 
 ## Requirements
 
@@ -52,7 +53,7 @@ Prima della verifica chiudi OS Home e disabilita l'altra integrazione locale del
 
 Le entità nuove hanno identificatori propri: la plancia precedente non viene sostituita automaticamente. Puoi aggiungerle dal dispositivo tramite **Aggiungi alla plancia**, oppure adattare [l'esempio YAML](examples/dashboard.yaml) agli ID assegnati nel tuo sistema.
 
-**Silenzioso:** disattiva **Segnale acustico**. **Riscaldamento spento:** spegne il riscaldamento lasciando la ventilazione disponibile. **Ventilatore spento:** spegne il riscaldamento, ne verifica lo stato e mantiene la ventola accesa per 30 secondi se il riscaldamento era attivo. Poi spegne l'apparecchio. Un comando di riaccensione annulla lo spegnimento in attesa. La temperatura viene inviata come intero da 1 a 30 °C, secondo lo schema rilevato.
+**Silenzioso:** disattiva **Segnale acustico**. **Riscaldamento spento:** spegne il riscaldamento lasciando la ventilazione disponibile. **Ventilatore spento:** spegne il riscaldamento, ne verifica lo stato e mantiene la ventola accesa per 30 secondi se il riscaldamento era attivo. Poi spegne l'apparecchio. Un comando di riaccensione annulla lo spegnimento in attesa. La sequenza non è ancora collaudata sul dispositivo reale. Un riavvio o lo scaricamento dell'integrazione può interrompere il raffreddamento programmato; i comandi esterni a Home Assistant e il timer interno non sono intercettati. Le protezioni hardware originali restano indispensabili. La temperatura viene inviata come intero da 1 a 30 °C, secondo lo schema rilevato.
 
 ## Troubleshooting
 
@@ -72,10 +73,14 @@ python3.14 -m venv .venv
 .venv/bin/ruff check .
 ```
 
-Tests cover wire types, all nine speed round trips, heater semantics, read-back state, failure handling, serialized I/O, cancellation, sanitized diagnostics and actual Home Assistant platform loading/unloading and config flows. They do not command real hardware.
+Tests include simulated cooldown ordering and rejection of unconfirmed heater shutdown, as well as wire types, all nine speed round trips, heater semantics, read-back state, failure handling, serialized I/O, cancellation, sanitized diagnostics and actual Home Assistant platform loading/unloading and config flows. They do not command real hardware.
 
 The integration uses one serialized local client, executor-based blocking I/O and a shared [Home Assistant update coordinator](https://developers.home-assistant.io/docs/integration_fetching_data/). Polling defaults to 15 seconds and can be changed to 10–120 seconds through **Options**. Credentials remain in Home Assistant's configuration storage and are excluded from integration diagnostics.
 
 ## License
 
-MIT. Community project, not affiliated with Olimpia Splendid, Tuya or Home Assistant. TinyTuya is a separately installed MIT-licensed dependency. Product information: [Olimpia Splendid Vertigo](https://www.olimpiasplendid.it/trattamento-aria/purificatori-daria/vertigo).
+Copyright (c) 2026 igorsko and ha_os_vertigo contributors.
+
+The project is distributed under the [GNU General Public License, version 3 (GPL-3.0-only)](LICENSE). The original MIT copyright and permission notice is retained in [LICENSES/MIT.txt](LICENSES/MIT.txt) for previously MIT-licensed code; existing MIT grants remain valid. TinyTuya is a separately installed MIT-licensed dependency.
+
+Community project, not affiliated with Olimpia Splendid, Tuya or Home Assistant. Product information: [Olimpia Splendid Vertigo](https://www.olimpiasplendid.it/trattamento-aria/purificatori-daria/vertigo).
